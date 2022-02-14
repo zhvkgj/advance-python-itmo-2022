@@ -1,12 +1,11 @@
 #!/usr/bin/python3
-
-
 import ast
+import astunparse
 from inspect import getsource
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from fibonacci import fibonacci as fib
+from hw_1.src.fibonacci_ast_visualizer.fibonacci import fibonacci as fib
 
 
 class NetworkxGraphBuilder(ast.NodeVisitor):
@@ -15,7 +14,7 @@ class NetworkxGraphBuilder(ast.NodeVisitor):
         self.stack = []
 
     def _visit_any(self, node):
-        node_label = ast.unparse(node)
+        node_label = astunparse.unparse(node)
         if isinstance(node, ast.FunctionDef):
             node_label = f" Fun {node.name}"
         paren_label = None
@@ -56,16 +55,18 @@ class NetworkxGraphBuilder(ast.NodeVisitor):
         self._visit_any(node)
 
 
-def main():
+def visualize_and_save(directory='.', filename='fib.jpg', verbose=False):
     node = ast.parse(getsource(fib))
     gb = NetworkxGraphBuilder()
     gb.visit(node)
-    print(ast.dump(node, indent=4))
+
+    if verbose:
+        print(astunparse.dump(node))
+
     plt.figure(figsize=(16.53, 11.69))
     nx.draw(gb.graph, with_labels=True)
-    # plt.savefig("fib.jpg")
-    plt.show()
+    plt.savefig(f"{directory}/{filename}")
 
 
 if __name__ == "__main__":
-    main()
+    visualize_and_save()
