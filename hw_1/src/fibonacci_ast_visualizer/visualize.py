@@ -5,7 +5,7 @@ from inspect import getsource
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from hw_1.src.fibonacci_ast_visualizer.fibonacci import fibonacci as fib
+from fibonacci_ast_visualizer.fibonacci import fibonacci as fib
 
 
 class NetworkxGraphBuilder(ast.NodeVisitor):

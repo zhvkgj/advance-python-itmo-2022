@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='fibonacci_ast_visualizer',
-    version='0.3.3',
+    version='0.3.4',
     author="Sergey Sokolvyak",
     packages=find_packages(where='src', include=['fibonacci_ast_visualizer', 'fibonacci_ast_visualizer.*']),
     package_dir={'': 'src'},

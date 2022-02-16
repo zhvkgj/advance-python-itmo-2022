@@ -3,12 +3,9 @@ import subprocess
 import os
 from functools import reduce
 from typing import List
+
+import click as click
 from fibonacci_ast_visualizer import visualize
-
-
-def save_to_file(directory: str, filename: str, content: str):
-    with open(f"{directory}/{filename}", "w") as file:
-        file.write(content)
 
 
 def assert_dim(table: List[List[str]]):
@@ -55,25 +52,40 @@ def image_to_tex(path_to_image: str) -> str:
     return f"\\includegraphics[scale=0.2]{{{path_to_image}}}\n"
 
 
-def pdf_with_table_and_image(directory: str, filename: str, table: List[List[str]]):
-    def wrap_into_doc(content: str):
+def table_and_image_to_tex(working_dir: str, table: List[List[str]]) -> str:
+    def wrap_into_doc(content: str) -> str:
         return (f"\\documentclass{{article}}\n"
                 f"\\usepackage{{graphicx}}\n"
                 f"\\begin{{document}}\n\n"
                 f"{content}\n\\end{{document}}")
-    abspath = os.path.abspath(directory)
-    image_name = "fib.jpg"
-    visualize.visualize_and_save(abspath, image_name, False)
-    image_tex = image_to_tex(f"{abspath}/{image_name}")
-    table_tex = table_to_tex(table)
-    save_to_file(abspath, filename, wrap_into_doc(table_tex + image_tex))
-    subprocess.call(['pdflatex', '-output-directory', abspath, filename])
+    visualize.visualize_and_save(working_dir, "fib.jpg", False)
+    return wrap_into_doc(table_to_tex(table) + image_to_tex(f"{working_dir}/fib.jpg"))
+
+
+def save_to_file(directory: str, filename: str, content: str):
+    with open(f"{directory}/{filename}", "w") as file:
+        file.write(content)
+
+
+def read_table_from_file(path_to_file: str) -> List[List[str]]:
+    with open(path_to_file, "r") as file:
+        return list(map(lambda line: line.split(), file))
+
+
+def save_tex_as_pdf(tex_content: str, directory: str, filename: str):
+    save_to_file(directory, filename, tex_content)
+    subprocess.call(['pdflatex', '-output-directory', directory, filename])
+
+
+@click.command()
+@click.option("-i", default="table.txt", help="path to file with input table")
+@click.option("-o", default="artifacts", help="directory for output")
+@click.option("--name", default="table_with_image.pdf", help="name of a pdf file will be generated")
+def generate_pdf(i: str, o: str, name: str):
+    out = os.path.abspath(o)
+    tex_content = table_and_image_to_tex(out, read_table_from_file(i))
+    save_tex_as_pdf(tex_content, o, name)
 
 
 if __name__ == '__main__':
-    example_table = [
-        ['1111111111111111', '222222222222222', '3'],
-        ['4444444444444444444', '5', '666666'],
-        ['7', '8888888', '99']
-    ]
-    pdf_with_table_and_image("artifacts", "table-image.tex", example_table)
+    generate_pdf()
