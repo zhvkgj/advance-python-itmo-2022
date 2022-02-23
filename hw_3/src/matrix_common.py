@@ -44,13 +44,4 @@ class UtilityMixin:
         return self.__repr__()
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(data={self._data})"
-
-
-class HashableMixin:
-    """
-    Mixin with dunder __hash__ which returns hash of this matrix.
-    Hash is evaluated by the formula:
-    """
-    def __hash__(self):
-        pass
+        return f"{self.__class__.__name__}(data={self._data.__repr__()})"

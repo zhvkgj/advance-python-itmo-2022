@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from hw_3.src.matrix_easy import Matrix
 import hw_3.test.test_common as test_common
+from hw_3.src.matrix_easy import Matrix
 
 
 def run_easy_test():
