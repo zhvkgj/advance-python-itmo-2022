@@ -1,0 +1,4 @@
+Benchmark results:
+	for RUN_WITH_SINGLE_THREAD time is: 0.00002752 sec
+	for RUN_WITH_TEN_THREADS time is: 0.00086939 sec
+	for RUN_WITH_TEN_PROCESSES time is: 0.01172229 sec
